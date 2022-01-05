@@ -1,3 +1,4 @@
+
 window.addEventListener("load", () => {
     let lon
     let lat
@@ -5,44 +6,85 @@ window.addEventListener("load", () => {
     let temperaturaValor = document.getElementById('temperatura-valor')
     let temperaturaDescripcion = document.getElementById('temperatura-descripcion')
     let ubicacion = document.getElementById('ubicacion')
-    let iconoAnimado = document.getElementById('icono-animado')
+    let iconoAnimado = document.getElementById('iconoAnimado')
     let vientoVelocidad = document.getElementById('viento-velocidad')
 
     //si el objeto existe, los servicios de geolocalizacion existen
-    if(navigator.geolocation){
+    if (navigator.geolocation) {
         //obtenemos la posicion del dispositivo
-        navigator.geolocation.getCurrentPosition( posicion => {
+        navigator.geolocation.getCurrentPosition(posicion => {
             lon = posicion.coords.longitude
             lat = posicion.coords.latitude
 
             // ubicacion actual
             //const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=45cc04a0154bcd4b0a2eb2d182e79b6e`
-        
+
             // por ciudad 
             const url = `https://api.openweathermap.org/data/2.5/weather?q=Avellaneda&lang=es&units=metric&appid=45cc04a0154bcd4b0a2eb2d182e79b6e`
             console.log(url)
 
-            // hago el fetch 
             fetch(url)
-            // lo pasamos a formato json
-            .then(response => { return Response.json})
-            .then(data => {
-                // redondeamos la temperatura
-                let temp = Math.round(data.main.temp)
-                temperaturaValor.textContent =  `${temp} °C`
-                let desc = data.weather[0].description
-                temperaturaDescripcion.textContent = desc.toUpperCase()
-                
-                ubicacion.textContent = data.name
-                vientoVelocidad.textContent = `${data.wind.speed} m/s`
+                .then(response => { return response.json() })
+                .then(data => {
+                    //console.log(data)
 
+                    let temp = Math.round(data.main.temp)
+                    //console.log(temp)
+                    temperaturaValor.textContent = `${temp} ° C`
+
+                    //console.log(data.weather[0].description)
+                    let desc = data.weather[0].description
+                    temperaturaDescripcion.textContent = desc.toUpperCase()
+                    ubicacion.textContent = data.name
+
+                    vientoVelocidad.textContent = `${data.wind.speed} m/s`
+
+                      //para iconos estáticos
+                //const urlIcon = `http://openweathermap.org/img/wn/${iconCode}.png`                     
+                //icono.src = urlIcon
+                //console.log(data.weather[0].icon)
+
+                //para iconos dinámicos
+                console.log(data.weather[0].main)
+                switch (data.weather[0].main) {
+                    case 'Thunderstorm':
+                      iconoAnimado.src='animated/thunder.svg'
+                      console.log('TORMENTA');
+                      break;
+                    case 'Drizzle':
+                      iconoAnimado.src='animated/rainy-2.svg'
+                      console.log('LLOVIZNA');
+                      break;
+                    case 'Rain':
+                      iconoAnimado.src='animated/rainy-7.svg'
+                      console.log('LLUVIA');
+                      break;
+                    case 'Snow':
+                      iconoAnimado.src='animated/snowy-6.svg'
+                        console.log('NIEVE');
+                      break;                        
+                    case 'Clear':
+                        iconoAnimado.src='animated/day.svg'
+                        console.log('LIMPIO');
+                      break;
+                    case 'Atmosphere':
+                      iconoAnimado.src='animated/weather.svg'
+                        console.log('ATMOSFERA');
+                        break;  
+                    case 'Clouds':
+                        iconoAnimado.src='animated/cloudy-day-1.svg'
+                        console.log('NUBES');
+                        break;  
+                    default:
+                      iconoAnimado.src='animated/cloudy-day-1.svg'
+                      console.log('por defecto');
+                  }
 
             })
-
-            // si hay error, mostrame por consola
-            .catch(error => {
+            .catch( error => {
                 console.log(error)
             })
-        })
+       })
+          
     }
 })
